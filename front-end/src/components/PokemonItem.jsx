@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
 
-export const PokemonItem = ({ pokemon }) => {
+export const PokemonItem = ({ pokemon,deletePokemon }) => {
     const [nounProjectIcon, setNounProjectIcon] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [newType, setNewType] = useState("");
@@ -52,6 +52,7 @@ export const PokemonItem = ({ pokemon }) => {
     return (
         <li style={{ margin: "3vmin", display: "flex", flexDirection: "column" }}>
             Name: {pokemon.name}
+            <button onClick={() => deletePokemon(pokemon.id)}>Delete</button>
             <br /> Level: {pokemon.level}
             {nounProjectIcon && (
                 <img style={{ height: "5vmin", width: "5vmin" }} src={nounProjectIcon} alt="Icon" />

@@ -5,6 +5,7 @@ from django.http import JsonResponse # Our responses will now be returned in JSO
 # Import both APIView and Response from DRF
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST
 # Create your views here.
 
 # def all_pokemon(request):
@@ -18,16 +19,37 @@ class All_pokemon(APIView):
         # Under response we don't necessarily need to send information in JSON format instead DRF will format our response and make it acceptable for Front-End frameworks
         return Response(pokemon.data)
     
+
 class A_pokemon(APIView):
-    
-    #  Specify the method to trigger this behavior
-    def get(self, request, id): # <-- Notice id is now a parameter and its value is being pulled straight from our URL
-        # Lets initialize pokemon as None and give it a
-        # corresponding query set depending on the ids type
-        pokemon = None
-        if type(id) == int: # the to_python method from the converter will return the correct type here
-            pokemon = Pokemon.objects.get(id = id)
+
+    # Method to fetch a Pokemon by ID or name
+    def get_a_pokemon(self, id):
+        if type(id) == int:
+            return get_object_or_404(Pokemon, id=id)
         else:
-            pokemon = Pokemon.objects.get(name = id.title()) # <== We only accept names in Title format so lets use the `title` method to ensure we have the user input in the correct format
-        return Response(PokemonSerializer(pokemon).data) #<=== Finally lets use the PokemonSerializer to return our Pokemon in the correct Format for Front End frameworks
-    
+            return get_object_or_404(Pokemon, name=id.title())
+
+    # Handle GET request
+    def get(self, request, id):
+        pokemon = self.get_a_pokemon(id)
+        serializer = PokemonSerializer(pokemon)
+        return Response(serializer.data)
+
+    # Handle PUT request
+    def put(self, request, id):
+        pokemon = self.get_a_pokemon(id)
+        serializer = PokemonSerializer(pokemon, data=request.data, partial=True)
+        if serializer.is_valid():
+            if 'level_up' in request.data and request.data['level_up']:
+                pokemon.level_up()
+            if 'captured' in request.data and isinstance(request.data['captured'], bool):
+                pokemon.change_caught_status(request.data.get("captured"))
+            if "moves" in request.data:
+                pokemon.moves.add(*request.data.get("moves", []))
+            if "description" in request.data:
+                pokemon.description = request.data.get("description")
+            if "type" in request.data:
+                pokemon.type = request.data.get("type")
+            serializer.save()
+            return Response(status=HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)

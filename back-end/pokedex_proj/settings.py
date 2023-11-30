@@ -46,7 +46,18 @@ INSTALLED_APPS = [
     "move_app",
     "corsheaders",
     "api_app",
+    "trainer_app",
+    'rest_framework.authtoken',
+    
 ]
+
+AUTH_USER_MODEL = 'trainer_app.Trainer' #<-- tells our Django Project to utilize the Trainer model
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

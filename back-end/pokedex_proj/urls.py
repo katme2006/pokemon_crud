@@ -41,4 +41,5 @@ urlpatterns = [
     path("api/v1/pokemon/", include("pokemon_app.urls")),
     path('api/v1/moves/', include("move_app.urls")),
     path('api/v1/noun/', include("api_app.urls")),
+    path('api/v1/users/', include("trainer_app.urls")),
 ]

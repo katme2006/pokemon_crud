@@ -3,6 +3,9 @@ import App from "./App";
 import { Pokemon } from "./pages/Pokemon";
 import { Home } from "./pages/Home";
 import { Moves } from "./pages/Moves";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from './pages/RegisterPage';
+
 
 const router = createBrowserRouter([
   {
@@ -21,6 +24,12 @@ const router = createBrowserRouter([
         path: "moves",
         element: <Moves />,
       },
+      {path:"login",
+    element:<LoginPage/>},
+    {
+      path: "register", // Define the register path
+      element: <RegisterPage />, // Assign RegisterPage component
+    },
     ],
   },
 ]);
